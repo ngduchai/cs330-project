@@ -1,9 +1,9 @@
 
 import rm;
 
-class StaticRM(RM):
+class StaticRM(rm.RM):
     def __init__(self, capacity):
-        super().__init__(capacity)
+        rm.RM.__init__(self, capacity)
         self.free_resource = capacity
 
     def adjust_partition(self):

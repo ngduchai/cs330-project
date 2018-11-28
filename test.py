@@ -1,8 +1,8 @@
-import rm;
-import flatworkload;
-import reservedpool;
-import staticrm;
-import env;
+import rm as common;
+from flatworkload import FlatWorkload;
+from reservedpool import ReservedPool;
+from staticrm import StaticRM;
+from env import Env;
 
 # System capacity
 SC = 1000
@@ -14,7 +14,7 @@ rm = StaticRM(SC)
 env = Env(rm)
 
 # system contain 1 reserved pool with weight = 1
-env.add_pool(POOL_RESERVED, ReservedPool(1))
+env.add_pool(common.POOL_RESERVED, ReservedPool(1))
 
 env.add_workload("flat", FlatWorkload(100, 10))
 

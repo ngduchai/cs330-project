@@ -18,7 +18,7 @@ class RM:
 
     def adjust_partition(self):
     # if static, doesn't change; if dynamic, re-adjusting the partition between pools
-
+        return
 
 class Pool:
     def __init__(self, weight):
@@ -33,15 +33,18 @@ class Pool:
     def alloc(self, capacity):
         #allocate new resources     
         self.capacity += capacity
+        self.free_capacity += capacity
 
     def reclaim(self, unit):
     	#reclaim resources
     	#Check the task before returning resources to the manager
+        return
 
     def launch_task(self, tasks):
     	#call task.execute() every time
     	#launch specific task on a set of resources
         #return a list of tasks that have finished at this particular time slot 
+        return
 
     # def task_finished(self):
     # 	#return a list of tasks that have finished at this particular time slot
@@ -52,17 +55,18 @@ class Pool:
 
 class Task:
     def __init__(self, task_id, arrival_time, resource, runtime, pool, workload):
-    	self.id = task_id
-    	self.arrival_time = arrival_time
-    	self.resource = resource #required resource size
-    	self.finish_time = -1
-    	self.remained_work = resource*runtime
-    	self.runtime = runtime
+        self.id = task_id
+        self.arrival_time = arrival_time
+        self.resource = resource #required resource size
+        self.finish_time = -1
+        self.remained_work = resource*runtime
+        self.runtime = runtime
         self.pool = pool
-        self.workload
+        self.workload = workload
 
     def execute(self):
         #update the self.remained_work
+        self.remained_work -= self.resource
 
 class Workload:
     def __init__(self):
@@ -72,7 +76,10 @@ class Workload:
 
     def make_request(self):
         #create a list of tasks and submit it to pool        
+        return
 
     def update(self, tasks):# tasks = a list of finished tasks
+        return
 
     def value(self):
+        return
