@@ -26,6 +26,7 @@ class Pool:
         self.capacity = 0
         self.weight = weight
         self.free_capacity = self.capacity
+        self.shrink_capacity = 0
         self.waiting_queue = []
         self.running_tasks = []
         #need to keep track of tasks
