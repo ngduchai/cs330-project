@@ -20,7 +20,8 @@ class Pool:
         self.capacity = 0
         self.weight = weight
         self.free_capacity = self.capacity
-        self.task_queue = []
+        self.waiting_queue = []
+        self.running_tasks = []
         #need to keep track of tasks
 
     def alloc(self, capacity):
@@ -32,28 +33,28 @@ class Pool:
     	#Check the task before returning resources to the manager
 
     def launch_task(self, tasks):
-    	
+    	#call task.execute() every time
     	#launch specific task on a set of resources
+        #return a list of tasks that have finished at this particular time slot 
 
-    def task_finished(self):
-    	#return a list of tasks that have finished at this particular time slot
+    # def task_finished(self):
+    # 	#return a list of tasks that have finished at this particular time slot
 
     def cost(self, task):
     	return None
     	#???  Calculate the cost for one task ???
+
 class Task:
-    def __init__(self, id, arrival_time, resource, runtime):
-    	self.id = id
+    def __init__(self, task_id, arrival_time, resource, runtime):
+    	self.id = task_id
     	self.arrival_time = arrival_time
     	self.resource = resource #required resource size
     	self.finish_time = -1
     	self.remained_work = resource*runtime
     	self.runtime = runtime
 
-
-    def add_pool(self, pool):
-
     def execute(self):
+        #update the self.remained_work
 
 class Workload:
     def __init__(self):
