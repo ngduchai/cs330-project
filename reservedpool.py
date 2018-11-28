@@ -3,7 +3,7 @@ import rm
 class ReservedPool(rm.Pool):
     def __init__(self, weight):
         rm.Pool.__init__(self, weight)
-        self.shrink_pending = 0
+        self.shrink_capacity = 0
 
     def reclaim(self, unit):
         if unit >= self.free_capacity:
@@ -14,9 +14,9 @@ class ReservedPool(rm.Pool):
         else:
             # if there is not enough resource, then return all free resource and pend the rest
             self.capacity -= self.free_capacity
-            self.shrink_pending = unit - self.free_capacity
+            self.shrink_capacity = unit - self.free_capacity
             self.free_capacity = 0
-            return unit - self.shrink_pending
+            return unit - self.shrink_capacity
 
     def launch_task(self, tasks):
         # Waiting queue is a FIFO queue, we first add new task to the waiting queue then check
@@ -40,14 +40,14 @@ class ReservedPool(rm.Pool):
             if task.remained_work <= 0:
                 # task finish, pool reclaim resource, but first it should check if there are
                 # resource it need to return to resource manager.
-                if self.shrink_pending > 0:
+                if self.shrink_capacity > 0:
                     # if there is, then freed resources are return to resource manager instead
-                    if self.shrink_pending <= task.resource:
-                        self.capacity -= self.shrink_pending
-                        self.free_capacity += task.resource - self.shrink_pending
-                        self.shrink_pending = 0
+                    if self.shrink_capacity <= task.resource:
+                        self.capacity -= self.shrink_capacity
+                        self.free_capacity += task.resource - self.shrink_capacity
+                        self.shrink_capacity = 0
                     else:
-                        self.shrink_pending -= task.resource
+                        self.shrink_capacity -= task.resource
                 else:
                     # otherwise, return free resource to the pool
                     self.free_capacity += task.resource
