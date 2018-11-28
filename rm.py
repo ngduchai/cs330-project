@@ -1,7 +1,13 @@
 import math;
 
+# Define pool names
+POOL_RESERVED = 'reserved' # only for testing purpose
+POOL_ON_DEMAND = 'on-demand'
+POOL_BURST = 'burst'
+POOL_VOLATILE = 'volatile'
+
 class RM:
-    def __init__(self, capacity, ):
+    def __init__(self, capacity):
         #set the capacity of all resourcews
         self.capacity = capacity
         self.pools = []
@@ -45,13 +51,15 @@ class Pool:
     	#???  Calculate the cost for one task ???
 
 class Task:
-    def __init__(self, task_id, arrival_time, resource, runtime):
+    def __init__(self, task_id, arrival_time, resource, runtime, pool, workload):
     	self.id = task_id
     	self.arrival_time = arrival_time
     	self.resource = resource #required resource size
     	self.finish_time = -1
     	self.remained_work = resource*runtime
     	self.runtime = runtime
+        self.pool = pool
+        self.workload
 
     def execute(self):
         #update the self.remained_work
