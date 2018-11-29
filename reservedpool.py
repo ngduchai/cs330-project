@@ -6,17 +6,8 @@ class ReservedPool(rm.Pool):
         self.shrink_capacity = 0
 
     def reclaim(self, unit):
-        if unit >= self.free_capacity:
-            # if there are enough resource, then shrink the capacity by unit
-            self.capacity -= unit
-            self.free_capacity -= unit
-            return unit
-        else:
-            # if there is not enough resource, then return all free resource and pend the rest
-            self.capacity -= self.free_capacity
-            self.shrink_capacity = unit - self.free_capacity
-            self.free_capacity = 0
-            return unit - self.shrink_capacity
+        # just ignore
+        return 0
 
     def launch_task(self, tasks):
         # Waiting queue is a FIFO queue, we first add new task to the waiting queue then check
@@ -38,20 +29,7 @@ class ReservedPool(rm.Pool):
         for task in self.running_tasks:
             task.execute()
             if task.remained_work <= 0:
-                # task finish, pool reclaim resource, but first it should check if there are
-                # resource it need to return to resource manager.
-                if self.shrink_capacity > 0:
-                    # if there is, then freed resources are return to resource manager instead
-                    if self.shrink_capacity <= task.resource:
-                        self.capacity -= self.shrink_capacity
-                        self.free_capacity += task.resource - self.shrink_capacity
-                        self.shrink_capacity = 0
-                    else:
-                        self.shrink_capacity -= task.resource
-                else:
-                    # otherwise, return free resource to the pool
-                    self.free_capacity += task.resource
-
+                self.free_capacity += task.resource
                 finished_tasks.append(task)
             else:
                 new_running_tasks.append(task)

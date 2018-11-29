@@ -5,7 +5,7 @@ class FlatWorkload(rm.Workload):
     def __init__(self, load, value_per_slot):
         rm.Workload.__init__(self)
         self.load = load
-        self.value_per_slot = value_per_slot
+        self.value_per_slot = float(value_per_slot)
         self.id_count = 0
  
     def make_request(self):

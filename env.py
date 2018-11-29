@@ -23,7 +23,6 @@ class Env:
             new_tasks = []
             for _, workload in self.workloads.iteritems():
                 new_tasks += workload.make_request()
-            print(time, "Number of new tasks", len(new_tasks))
             # shuffle task to ensure fairness
             random.shuffle(new_tasks)
             
@@ -42,7 +41,6 @@ class Env:
                 finished_tasks += self.pools[key].launch_task(task_list)
 
             # notify workloads about finished tasks
-            print(time, "Number of finished tasks", len(finished_tasks))
             for task in finished_tasks:
                 # update finish time for task
                 task.finish_time = time + 1 

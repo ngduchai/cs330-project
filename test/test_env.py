@@ -1,3 +1,9 @@
+
+# IMPORTANT: Run the test inside its directory
+
+import sys
+sys.path.insert(0, './..')
+
 import rm as common;
 from flatworkload import FlatWorkload;
 from reservedpool import ReservedPool;
@@ -21,6 +27,6 @@ env.add_workload("flat", FlatWorkload(100, 10))
 # Run experiment for 1000 time unit
 env.run(1000)
 
-print(env.workloads["flat"].value())
+print "Value of flat workload:", env.workloads["flat"].value()
 
 
