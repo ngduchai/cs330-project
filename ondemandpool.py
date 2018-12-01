@@ -23,16 +23,26 @@ class OnDemandPool(rm.Pool):
             self.shrink_capacity = 0
             return shrink_amt
 
-    # do we want to pass in tasks or use self.running_tasks?
     def launch_task(self, tasks):
-        # run each task
-        reclaimed = 0
+        # add the task to running_task if enough resources, or reject
         finished = []
         for task in tasks:
+            if task.resource <= self.free_capacity:
+                self.free_capacity -= task.resource
+                self.running_tasks.append(task)
+            else:
+                task.status = rm.Status.REJECTED
+                finished.append(task)
+
+        # run each task
+        reclaimed = 0
+        for task in self.running_tasks:
             task.execute()
             if task.isFinished():
                 reclaimed += task.resource
+                task.status = rm.Status.FINISHED
                 finished.append(task)
+       
         # reclaim additional resources when done running tasks
         if self.shrink_left > 0:
             self.shrink_capacity += reclaimed

@@ -1,4 +1,5 @@
 import math;
+from enum import Enum
 
 # Define pool names
 POOL_RESERVED = 'reserved' # only for testing purpose
@@ -60,10 +61,6 @@ class Pool(object):
     	return None
     	#???  Calculate the cost for one task ???
 
-    # # Do we want this?:
-    # def add_task(self, task):
-    #     self.tasks.append(task)
-
 class Task:
     def __init__(self, task_id, arrival_time, resource, runtime, pool, workload):
         self.id = task_id
@@ -74,7 +71,7 @@ class Task:
         self.runtime = runtime
         self.pool = pool
         self.workload = workload
-        self.status = STATUS_WAITING
+        self.status = Status.WAITING
 
     def execute(self):
         #update the self.remained_work
