@@ -73,7 +73,7 @@ class Task:
         self.runtime = runtime
         self.pool = pool
         self.workload = workload
-        self.status = STATUA_WAITING
+        self.status = STATUS_WAITING
 
     def execute(self):
         #update the self.remained_work
