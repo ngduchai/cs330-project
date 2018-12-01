@@ -20,7 +20,7 @@ class RM:
     # if static, doesn't change; if dynamic, re-adjusting the partition between pools
         return
 
-class Pool:
+class Pool(object):
     def __init__(self, weight):
         #set the capacity of all resourcews
         self.capacity = 0
@@ -54,6 +54,10 @@ class Pool:
     	return None
     	#???  Calculate the cost for one task ???
 
+    # # Do we want this?:
+    # def add_task(self, task):
+    #     self.tasks.append(task)
+
 class Task:
     def __init__(self, task_id, arrival_time, resource, runtime, pool, workload):
         self.id = task_id
@@ -68,6 +72,9 @@ class Task:
     def execute(self):
         #update the self.remained_work
         self.remained_work -= self.resource
+
+    def isFinished(self):
+        return self.remained_work == 0
 
 class Workload:
     def __init__(self):
@@ -84,3 +91,4 @@ class Workload:
 
     def value(self):
         return
+
