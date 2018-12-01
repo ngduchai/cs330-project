@@ -9,6 +9,7 @@ from ondemandpool import OnDemandPool
 class TestOnDemandPool(unittest.TestCase):
 
     def test_reclaim_all(self):
+        # test reclaiming when there is more than enough capacity
         CAPACITY = 5
         TRY_RECLAIM = 3
         pool = OnDemandPool(None, None)
@@ -19,6 +20,7 @@ class TestOnDemandPool(unittest.TestCase):
         self.assertEqual(pool.shrink_left, 0)
 
     def test_reclaim_part(self):
+        # test reclaiming when there is not enough capacity
         CAPACITY = 3
         TRY_RECLAIM = 5
         pool = OnDemandPool(None, None)
@@ -29,6 +31,7 @@ class TestOnDemandPool(unittest.TestCase):
         self.assertEqual(pool.shrink_left, TRY_RECLAIM - CAPACITY)
 
     def test_launch_task_and_reclaim(self):
+        # test launch_task when a task finishes and frees resources
         SHRINK_LEFT = 5
         pool = OnDemandPool(None, None)
         pool.shrink_left = SHRINK_LEFT
@@ -42,6 +45,7 @@ class TestOnDemandPool(unittest.TestCase):
         self.assertEqual(pool.shrink_left, SHRINK_LEFT - task.resource)
 
     def test_cost_long_task(self):
+        # test cost for runtime longer than min
         TASK_RUNTIME = 80
         TASK_RESOURCE = 15
         OD_MIN_LEN = 12
@@ -51,6 +55,7 @@ class TestOnDemandPool(unittest.TestCase):
         self.assertEqual(cost, TASK_RUNTIME * TASK_RESOURCE)
 
     def test_cost_short_task(self):
+        # test cost for runtime shorter than min
         TASK_RUNTIME = 10
         TASK_RESOURCE = 15
         OD_MIN_LEN = 12
