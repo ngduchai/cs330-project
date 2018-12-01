@@ -7,12 +7,11 @@ POOL_ON_DEMAND = 'on-demand'
 POOL_BURST = 'burst'
 POOL_VOLATILE = 'volatile'
 
-class Status(Enum):
-    WAITING = 0
-    RUNNING = 1
-    FINISHED = 2
-    REJECTED = -1
-    FAILED = -2
+STATUS_FINISH = "FINISH"
+STATUS_FAILED = "FAILED"
+STATUS_WAITING = "WAITING"
+STATUS_RUNNING = "RUNNING"
+STATUS_KIILED = "KILLED"
 
 class RM:
     def __init__(self, capacity):
