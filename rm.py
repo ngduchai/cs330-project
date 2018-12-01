@@ -6,6 +6,11 @@ POOL_ON_DEMAND = 'on-demand'
 POOL_BURST = 'burst'
 POOL_VOLATILE = 'volatile'
 
+STATUS_FINISH = "FINISH"
+STATUS_FAILED = "FAILED"
+STATUS_WAITING = "WAITING"
+STATUS_RUNNING = "RUNNING"
+
 class RM:
     def __init__(self, capacity):
         #set the capacity of all resourcews
@@ -68,6 +73,7 @@ class Task:
         self.runtime = runtime
         self.pool = pool
         self.workload = workload
+        self.status = STATUA_WAITING
 
     def execute(self):
         #update the self.remained_work
