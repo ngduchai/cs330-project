@@ -62,10 +62,6 @@ class Pool(object):
     	return None
     	#???  Calculate the cost for one task ???
 
-    # # Do we want this?:
-    # def add_task(self, task):
-    #     self.tasks.append(task)
-
 class Task:
     def __init__(self, task_id, arrival_time, resource, runtime, pool, workload):
         self.id = task_id

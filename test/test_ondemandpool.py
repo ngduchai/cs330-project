@@ -48,6 +48,7 @@ class TestOnDemandPool(unittest.TestCase):
         self.assertEqual(task.status, Status.FINISHED)
 
     def test_launch_task_reject(self):
+        # test rejecting a task
         SHRINK_LEFT = 5
         pool = OnDemandPool(None, None)
         pool.shrink_left = SHRINK_LEFT
