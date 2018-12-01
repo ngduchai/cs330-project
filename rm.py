@@ -1,4 +1,5 @@
 import math;
+from enum import Enum
 
 # Define pool names
 POOL_RESERVED = 'reserved' # only for testing purpose
@@ -6,10 +7,12 @@ POOL_ON_DEMAND = 'on-demand'
 POOL_BURST = 'burst'
 POOL_VOLATILE = 'volatile'
 
-STATUS_FINISH = "FINISH"
-STATUS_FAILED = "FAILED"
-STATUS_WAITING = "WAITING"
-STATUS_RUNNING = "RUNNING"
+class Status(Enum):
+    WAITING = 0
+    RUNNING = 1
+    FINISHED = 2
+    REJECTED = -1
+    FAILED = -2
 
 class RM:
     def __init__(self, capacity):
@@ -73,7 +76,7 @@ class Task:
         self.runtime = runtime
         self.pool = pool
         self.workload = workload
-        self.status = STATUS_WAITING
+        self.status = Status.WAITING
 
     def execute(self):
         #update the self.remained_work

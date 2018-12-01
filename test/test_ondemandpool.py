@@ -3,7 +3,7 @@ import unittest
 import sys
 sys.path.insert(0, './..')
 
-from rm import Task
+from rm import Task, Status
 from ondemandpool import OnDemandPool
 
 class TestOnDemandPool(unittest.TestCase):
@@ -37,12 +37,31 @@ class TestOnDemandPool(unittest.TestCase):
         pool.shrink_left = SHRINK_LEFT
         TASK_RESOURCE = 2
         TASK_RUNTIME = 1
+        FREE_CAPACITY = 10
         task = Task(None, None, TASK_RESOURCE, TASK_RUNTIME, None, None)
         self.assertEqual(task.remained_work, task.resource)
         tasks = [task]
+        pool.free_capacity = FREE_CAPACITY
         finished = pool.launch_task(tasks)
         self.assertEqual(finished, tasks)
         self.assertEqual(pool.shrink_left, SHRINK_LEFT - task.resource)
+        self.assertEqual(task.status, Status.FINISHED)
+
+    def test_launch_task_reject(self):
+        SHRINK_LEFT = 5
+        pool = OnDemandPool(None, None)
+        pool.shrink_left = SHRINK_LEFT
+        TASK_RESOURCE = 5
+        TASK_RUNTIME = 1
+        FREE_CAPACITY = 2
+        task = Task(None, None, TASK_RESOURCE, TASK_RUNTIME, None, None)
+        self.assertEqual(task.remained_work, task.resource)
+        tasks = [task]
+        pool.free_capacity = FREE_CAPACITY
+        finished = pool.launch_task(tasks)
+        self.assertEqual(pool.shrink_left, SHRINK_LEFT)
+        self.assertEqual(task.status, Status.REJECTED)
+             
 
     def test_cost_long_task(self):
         # test cost for runtime longer than min
@@ -62,7 +81,7 @@ class TestOnDemandPool(unittest.TestCase):
         pool = OnDemandPool(OD_MIN_LEN, None)
         task = Task(None, None, TASK_RESOURCE, TASK_RUNTIME, None, None)
         cost = pool.cost(task)
-        self.assertEqual(cost, OD_MIN_LEN * TASK_RESOURCE)        
+        self.assertEqual(cost, OD_MIN_LEN * TASK_RESOURCE) 
 
 if __name__ == '__main__':
     unittest.main()
