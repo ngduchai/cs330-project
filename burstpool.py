@@ -4,33 +4,32 @@ class BurstPool(rm.Pool):
     def __init__(self, *args, **kwargs):
         super(BurstPool, self).__init__(*args, **kwargs)
         # self.shrink_capacity = 0
-、        self.od_min_len = od_min_len
 
     def reclaim(self, unit):
         #reclaim resources
-        if self.free_capacity >= unit:
+        self.shrink_capacity += unit
+        if self.free_capacity >= self.shrink_capacity:
+            unit = self.shrink_capacity
             self.free_capacity -= unit
-            self.capacity -= unit
+            # self.capacity -= unit
+            self.shrink_capacity = 0
             return unit
         else:
             temp = self.free_capacity
-            self.capacity -= temp
-            self.shrink_capacity += (unit-temp)
+            # self.capacity -= temp
+            self.shrink_capacity -= temp
             self.free_capacity = 0
             return temp
 
     def launch_task(self, tasks):
         # run each task
-        reclaimed = 0
         finished = []
         for task in tasks:
             task.execute()
             if task.isFinished():
-                reclaimed += task.resource
+                self.free_capacity += task.resource
                 finished.append(task)
-        # reclaim additional resources when done running tasks
-        if self.shrink_left > 0:
-            self.shrink_capacity += reclaimed
+        if self.shrink_capacity > 0 and self.free_capacity > 0:
             self.reclaim(0)
         return finished
 
