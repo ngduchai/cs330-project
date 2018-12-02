@@ -18,7 +18,7 @@ class BurstPool(rm.Pool):
             return 0
         else:
             unit_resource = max(run_length)/self.time_guarantee*self.max_resource*self.task_guarantee
-            return (self.free_capacity+unit_resource-self.requirement)
+            return (self.capacity-self.requirement-max(self.capacity-self.free_capacity-unit_resource, 0))
 
     def reclaim(self, unit):
         #reclaim resources
