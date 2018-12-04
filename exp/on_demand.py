@@ -25,8 +25,8 @@ def plot_values(p, va, rf, pname):
 # System capacity
 SC = 350
 # Experiment length
-#time = 1 * 30 * 60 * 60 # An hour
-time = 15 * 30 * 60 # 15 mins
+time = 1 * 30 * 60 * 60 # An hour
+#time = 10 * 30 * 60 # 15 mins
 # Pool names
 POOLNAME_BURST = "on-demand-burst"
 POOLNAME_FLAT =  "on-demand-flat"
@@ -60,6 +60,11 @@ Values = [] # Total values
 OpValues = [] # Optimal value
 OpPartition = [] # Optimal partition
 
+# initialize VA workload
+va_workload = VAWorkload(lamb, value_per_slot, normal_load,
+        burst_height, burst_width, timeliness, task_size, POOLNAME_BURST)
+va_workload.setup(time)
+
 # Parameter to be varied
 #dn  = np.array(list(range(1000, 160001, 5000)))
 dn  = np.array([1, 2])
@@ -78,10 +83,10 @@ for w in dn:
         # initialize workloads 
         flat_workload = FlatWorkload(flat_load, flat_task_size, flat_value, POOLNAME_FLAT)
         env.add_workload("flat", flat_workload)
-        va_workload = VAWorkload(lamb, value_per_slot, normal_load,
-                burst_height, burst_width, timeliness, task_size, POOLNAME_BURST)
+        va_workload.restart()
+        print va_workload.wait_for_burst, va_workload.burst_time
         env.add_workload("va", va_workload)
-        
+    
         # system contain 2 on-demand pools, one for flat and another for VA
         #burst_pool = OnDemandPool(ondemand_min_len, Rva[i])
         burst_pool = ReservedPool(Rva[i])

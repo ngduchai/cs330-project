@@ -18,17 +18,24 @@ class VAWorkload(rm.Workload):
         self.task_size = task_size
         self.poolname = poolname
         self.failed_tasks = []
+        self.setup_burst_time = []
         self.burst_time = []
 
-    def restart(time):
-        self.bursts = []
-        self.wait_for_burst = int(random.expovariate(self.lamb))
-        self.id_count = 0
-        self.burst_time = 0
+    def setup(self, time):
         t = 0
         while t < time:
-            bt = 
+            bt = int(random.expovariate(self.lamb))
+            t += bt
+            self.setup_burst_time.append(bt)
 
+    def restart(self):
+        self.bursts = []
+        self.id_count = 0
+        self.failed_tasks = []
+        self.wait_for_burst = self.setup_burst_time[0]
+        self.burst_time = []
+        for i in range(len(self.setup_burst_time) - 1):
+            self.burst_time.append(self.setup_burst_time[i+1])
 
 
     def make_request(self):
@@ -40,7 +47,11 @@ class VAWorkload(rm.Workload):
             tasks.append(t)
             self.wait_for_burst -= 1
         else:
-            self.wait_for_burst = int(random.expovariate(self.lamb))
+            if len(self.burst_time) > 0:
+                self.waiting_for_burst = self.burst_time.pop()
+                print self.waiting_for_burst
+            else:
+                self.wait_for_burst = int(random.expovariate(self.lamb))
             self.bursts.append(self.burst_width)
         
         new_bursts = []
