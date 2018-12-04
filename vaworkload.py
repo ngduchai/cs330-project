@@ -49,7 +49,6 @@ class VAWorkload(rm.Workload):
         else:
             if len(self.burst_time) > 0:
                 self.waiting_for_burst = self.burst_time.pop()
-                print self.waiting_for_burst
             else:
                 self.wait_for_burst = int(random.expovariate(self.lamb))
             self.bursts.append(self.burst_width)

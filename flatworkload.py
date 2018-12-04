@@ -23,10 +23,12 @@ class FlatWorkload(rm.Workload):
 
     def update(self, tasks):
         for task in tasks:
-            if (task.status != rm.Status.FINISHED):
-                self.failed_tasks.append(task)
-            else:
-                self.finished_tasks.append(task);
+            if (task.status == rm.Status.FINISHED):
+                self.finished_tasks.append(task)
+            #if (task.status != rm.Status.FINISHED):
+            #    self.failed_tasks.append(task)
+            #else:
+            #    self.finished_tasks.append(task);
 
     def value(self):
         value = 0
