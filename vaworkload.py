@@ -50,8 +50,10 @@ class VAWorkload(rm.Workload):
     def value(self):
         value = 0
         for task in self.finished_tasks:
-            latency = task.finish_time - task.arrival_time
-            value += self.value_per_slot * (self.timeliness ** (-latency))
+            if task.resource != self.normal_load:
+                # Only burst generates value
+                latency = task.finish_time - task.arrival_time
+                value += self.value_per_slot * (self.timeliness ** (-latency))
         return value
 
 
