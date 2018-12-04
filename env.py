@@ -41,10 +41,15 @@ class Env:
                 finished_tasks += self.pools[key].launch_task(task_list)
 
             # notify workloads about finished tasks
+            updated_tasks = {}
             for task in finished_tasks:
                 # update finish time for task
-                task.finish_time = time + 1 
-                task.workload.update([task])
+                task.finish_time = time + 1
+                if task.workload not in updated_tasks:
+                    updated_tasks[task.workload] = []
+                updated_tasks[task.workload].append(task)
+            for workload, task_list in updated_tasks.iteritems():
+                workload.update(task_list)
             
             # finnally, let the resource manager adjust its partition
             self.rm.adjust_partition();

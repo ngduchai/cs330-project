@@ -29,6 +29,7 @@ class ReservedPool(rm.Pool):
         for task in self.running_tasks:
             task.execute()
             if task.remained_work <= 0:
+                task.status = rm.Status.FINISHED
                 self.free_capacity += task.resource
                 finished_tasks.append(task)
             else:

@@ -3,7 +3,8 @@ import rm;
 import random;
 
 class VAWorkload(rm.Workload):
-    def __init__(self, lamb, value_per_slot, normal_load, burst_height, burst_width, timeliness):
+    def __init__(self, lamb, value_per_slot, normal_load,
+            burst_height, burst_width, timeliness, poolname):
         rm.Workload.__init__(self)
         self.lamb = lamb
         self.value_per_slot = float(value_per_slot)
@@ -14,11 +15,14 @@ class VAWorkload(rm.Workload):
         self.bursts = []
         self.wait_for_burst = int(random.expovariate(self.lamb))
         self.id_count = 0
+        self.poolname = poolname
+        self.failed_tasks = []
  
     def make_request(self):
-        tasks = []
+        tasks = self.failed_tasks; # resubmit all failed tasks
+        self.failed_tasks = []
         if self.wait_for_burst != 0:
-            t = rm.Task(self.id_count, 0, self.normal_load, 1, rm.POOL_RESERVED, self)
+            t = rm.Task(self.id_count, 0, self.normal_load, 1, self.poolname, self)
             self.id_count += 1
             tasks.append(t)
             self.wait_for_burst -= 1
@@ -28,23 +32,26 @@ class VAWorkload(rm.Workload):
         
         new_bursts = []
         for burst in self.bursts:
-            tasks.append(rm.Task(self.id_count, 0, self.burst_height, 1, rm.POOL_RESERVED, self))
+            tasks.append(rm.Task(self.id_count, 0, self.burst_height, 1, self.poolname, self))
             self.id_count += 1
             burst -= 1
             if burst != 0:
-                new_burst.append(burst)
+                new_bursts.append(burst)
         self.bursts = new_bursts
         return tasks
 
     def update(self, tasks):
         for task in tasks:
-            self.finished_tasks.append(task);
+            if (task.status != rm.Status.FINISHED):
+                self.failed_tasks.append(task)
+            else:
+                self.finished_tasks.append(task);
 
     def value(self):
         value = 0
         for task in self.finished_tasks:
             latency = task.finish_time - task.arrival_time
-            value += self.value_per_slot * (timeliness ** (-latency))
+            value += self.value_per_slot * (self.timeliness ** (-latency))
         return value
 
 

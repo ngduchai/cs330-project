@@ -24,7 +24,8 @@ burst_height = 100
 burst_width = 1
 timeliness = 1.01
 
-va = VAWorkload(lamb, value_per_slot, normal_load, burst_height, burst_width, timeliness)
+va = VAWorkload(lamb, value_per_slot, normal_load,
+        burst_height, burst_width, timeliness, common.POOL_RESERVED)
 
 time = 1000000
 
