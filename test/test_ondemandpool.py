@@ -49,9 +49,9 @@ class TestOnDemandPool(unittest.TestCase):
 
     def test_launch_task_reject(self):
         # test rejecting a task
-        shrink_capacity = 5
+        SHRINK_CAPACITY = 5
         pool = OnDemandPool(None, None)
-        pool.shrink_capacity = shrink_capacity
+        pool.shrink_capacity = SHRINK_CAPACITY
         TASK_RESOURCE = 5
         TASK_RUNTIME = 1
         FREE_CAPACITY = 2
@@ -60,7 +60,7 @@ class TestOnDemandPool(unittest.TestCase):
         tasks = [task]
         pool.free_capacity = FREE_CAPACITY
         finished = pool.launch_task(tasks)
-        self.assertEqual(pool.shrink_capacity, shrink_capacity)
+        self.assertEqual(pool.shrink_capacity, SHRINK_CAPACITY)
         self.assertEqual(task.status, Status.REJECTED)
              
 
