@@ -43,9 +43,10 @@ class OnDemandPool(rm.Pool):
                 finished.append(task)
        
         # reclaim additional resources when done running tasks
-        if self.shrink_capacity > 0 and reclaimed > 0:
+        if reclaimed > 0:
             self.free_capacity += reclaimed
-            self.reclaim(0)
+            if self.shrink_capacity > 0:
+                self.reclaim(0)
         return finished
 
     def cost(self, task):
