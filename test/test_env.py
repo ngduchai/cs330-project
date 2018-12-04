@@ -22,7 +22,7 @@ env = Env(rm)
 # system contain 1 reserved pool with weight = 1
 env.add_pool(common.POOL_RESERVED, ReservedPool(1))
 
-env.add_workload("flat", FlatWorkload(100, 10))
+env.add_workload("flat", FlatWorkload(100, 100, 2, common.POOL_RESERVED))
 
 # Run experiment for 1000 time unit
 env.run(1000)

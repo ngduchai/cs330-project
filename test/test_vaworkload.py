@@ -21,10 +21,12 @@ lamb = 0.1
 value_per_slot = 10
 normal_load = 0
 burst_height = 100
+task_size = 10
 burst_width = 1
 timeliness = 1.01
 
-va = VAWorkload(lamb, value_per_slot, normal_load, burst_height, burst_width, timeliness)
+va = VAWorkload(lamb, value_per_slot, normal_load,
+        burst_height, burst_width, timeliness, task_size, common.POOL_RESERVED)
 
 time = 1000000
 
@@ -34,7 +36,7 @@ for t in range(time):
     tasks = va.make_request()
     if len(tasks) != 0:
         task = tasks.pop()
-        if task.resource == burst_height:
+        if task.resource == task_size:
             start_times.append(t)
 
 gaps = []
