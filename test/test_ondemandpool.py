@@ -83,6 +83,17 @@ class TestOnDemandPool(unittest.TestCase):
         task = Task(None, None, TASK_RESOURCE, TASK_RUNTIME, None, None)
         cost = pool.cost(task)
         self.assertEqual(cost, OD_MIN_LEN * TASK_RESOURCE) 
+        
+    def test_task_submission(self):
+        pool = OnDemandPool(None, None)
+        pool.alloc(100)
+        # continously submitting tasks with 1 resource and last for 1 timeslot
+        # since the pool capacity is 100, no task would be rejected
+        for i in range(1000):
+            task = Task(None, None, 1, 1, None, None)
+            finished_tasks = pool.launch_task([task])
+            for task in finished_tasks:
+                self.assertEqual(task.status, Status.FINISHED)
 
 if __name__ == '__main__':
     unittest.main()

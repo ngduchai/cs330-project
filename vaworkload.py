@@ -18,7 +18,19 @@ class VAWorkload(rm.Workload):
         self.task_size = task_size
         self.poolname = poolname
         self.failed_tasks = []
- 
+        self.burst_time = []
+
+    def restart(time):
+        self.bursts = []
+        self.wait_for_burst = int(random.expovariate(self.lamb))
+        self.id_count = 0
+        self.burst_time = 0
+        t = 0
+        while t < time:
+            bt = 
+
+
+
     def make_request(self):
         tasks = self.failed_tasks; # resubmit all failed tasks
         self.failed_tasks = []
