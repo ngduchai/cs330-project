@@ -73,7 +73,7 @@ class BurstPool(rm.Pool):
                 self.run_length.pop(i)
             else:
                 i += 1
-        if self.counter[0] >= 30:
+        if self.counter[0] >= self.time_guarantee:
             self.counter = [0]*2
         self.reclaim(0)
         return finished
