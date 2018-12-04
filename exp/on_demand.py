@@ -25,7 +25,8 @@ def plot_values(p, va, rf, pname):
 # System capacity
 SC = 350
 # Experiment length
-time = 1 * 30 * 60 * 60 # An hour
+#time = 1 * 30 * 60 * 60 # An hour
+time = 15 * 30 * 60 # 15 mins
 # Pool names
 POOLNAME_BURST = "on-demand-burst"
 POOLNAME_FLAT =  "on-demand-flat"
@@ -35,6 +36,7 @@ lamb = 1 / float(10 * 60 * 30) # happen 1 per 10 mins
 value_per_slot = 10
 normal_load = 1
 burst_height = normal_load * 140
+task_size = 10
 burst_width = 1 * 60 # burst last for 1 min
 timeliness = 1.01
 
@@ -77,7 +79,7 @@ for w in dn:
         flat_workload = FlatWorkload(flat_load, flat_task_size, flat_value, POOLNAME_FLAT)
         env.add_workload("flat", flat_workload)
         va_workload = VAWorkload(lamb, value_per_slot, normal_load,
-                burst_height, burst_width, timeliness, POOLNAME_BURST)
+                burst_height, burst_width, timeliness, task_size, POOLNAME_BURST)
         env.add_workload("va", va_workload)
         
         # system contain 2 on-demand pools, one for flat and another for VA
@@ -108,12 +110,13 @@ for w in dn:
     OpPartition.append(np.argmax(np.array(value)))
 
 # Plot graphs
-#plt.figure(1)
-#dt = 0
-#plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
+plt.figure(1)
+dt = 0
+plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
 
 plt.figure(2)
-dt = int(len(dn) / 2) - 1
+#dt = int(len(dn) / 2) - 1
+dt = 1
 plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
 
 #plt.figure(3)

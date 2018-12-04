@@ -4,7 +4,7 @@ import random;
 
 class VAWorkload(rm.Workload):
     def __init__(self, lamb, value_per_slot, normal_load,
-            burst_height, burst_width, timeliness, poolname):
+            burst_height, burst_width, timeliness, task_size, poolname):
         rm.Workload.__init__(self)
         self.lamb = lamb
         self.value_per_slot = float(value_per_slot)
@@ -15,6 +15,7 @@ class VAWorkload(rm.Workload):
         self.bursts = []
         self.wait_for_burst = int(random.expovariate(self.lamb))
         self.id_count = 0
+        self.task_size = task_size
         self.poolname = poolname
         self.failed_tasks = []
  
@@ -32,8 +33,11 @@ class VAWorkload(rm.Workload):
         
         new_bursts = []
         for burst in self.bursts:
-            tasks.append(rm.Task(self.id_count, 0, self.burst_height, 1, self.poolname, self))
-            self.id_count += 1
+            resource = 0
+            while resource < self.burst_height:
+                tasks.append(rm.Task(self.id_count, 0, self.task_size, 1, self.poolname, self))
+                self.id_count += 1
+                resource += self.task_size
             burst -= 1
             if burst != 0:
                 new_bursts.append(burst)
