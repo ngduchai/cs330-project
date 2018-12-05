@@ -49,7 +49,9 @@ class BurstPool(rm.Pool):
             if task.resource <= self.max_resource and task.resource <= max_launch and task.resource <= self.free_capacity:
                 self.free_capacity -= task.resource
                 self.counter[1] += task.resource
-                # task.status = rm.Status.RUNNING
+
+                task.status = rm.Status.RUNNING
+
                 self.running_tasks.append(task)
                 self.run_length.append(0)
             #else reject
