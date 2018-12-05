@@ -35,7 +35,7 @@ class OnDemandPool(rm.Pool):
             else:
                 # NOTE: we assume that the pool serves only 1 workload, which is true
                 # in our scenarios
-                if hasattr(task.workload, failed_ondemand_tasks):
+                if hasattr(task.workload, 'failed_ondemand_tasks'):
                     task.workload.failed_ondemand_tasks += tasks[i:]
                 else:
                     task.workload.failed_tasks += tasks[i:]

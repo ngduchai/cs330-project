@@ -2,10 +2,10 @@
 import rm;
 
 class FlatWorkload(rm.Workload):
-    def __init__(self, load, task_size, value_per_slot, poolname):
+    def __init__(self, load, task_size, value_per_unit, poolname):
         rm.Workload.__init__(self)
         self.load = load
-        self.value_per_slot = float(value_per_slot)
+        self.value_per_unit = float(value_per_unit)
         self.id_count = 0
         self.poolname = poolname
         self.task_size = task_size
@@ -36,7 +36,7 @@ class FlatWorkload(rm.Workload):
     def value(self):
         value = 0
         for task in self.finished_tasks:
-            value += self.value_per_slot * float(task.resource) / self.load / (task.finish_time - task.arrival_time)
+            value += self.value_per_unit * float(task.resource) / (task.finish_time - task.arrival_time)
         return value
 
 

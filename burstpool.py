@@ -58,7 +58,7 @@ class BurstPool(rm.Pool):
                 #task.status = rm.STATUS_FAILED
                 #finished.append(task)
                 # We break the interface to improve the implementation here
-                if hasattr(task.workload, failed_burst_tasks):
+                if hasattr(task.workload, 'failed_burst_tasks'):
                     task.workload.failed_burst_tasks += tasks[i:]
                 else:
                     task.workload.failed_tasks += tasks[i:]

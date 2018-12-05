@@ -53,7 +53,7 @@ ondemand_min_len = 1 * 60 * 30 # on-demand pool charge for at least 1 min
 # minmum percentage of resource reserved for mRva such that there is at least one burst happen
 #mRva = int(float(burst_height) / (1/lamb / burst_width))
 #mRva = (int(mRva / 10) + 1) * 10
-mRva = 0
+mRva = 25
 #Rva = np.array(list(range(mRva, SC+1)))
 Rva = np.array(list(range(mRva, SC+1, 25)))
 Rsf = SC - Rva
