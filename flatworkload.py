@@ -11,15 +11,18 @@ class FlatWorkload(rm.Workload):
         self.task_size = task_size
         self.failed_tasks = []
  
-    def make_request(self):
-        tasks = self.failed_tasks;
-        self.failed_tasks = [];
+    def make_request(self, time, pools):
+        if self.poolname not in pools:
+            pools[self.poolname] = []
+        #pools[self.poolname] += self.failed_tasks; # resubmit all failed tasks
+        #self.failed_tasks = []
         resource = 0;
         while resource < self.load:
-            tasks.append(rm.Task(self.id_count, 0, self.task_size, 1, self.poolname, self))
+            pools[self.poolname].append(rm.Task(self.id_count, time,
+                self.task_size, 1, self.poolname, self))
             resource += self.task_size
             self.id_count += 1
-        return tasks
+        return
 
     def update(self, tasks):
         for task in tasks:
