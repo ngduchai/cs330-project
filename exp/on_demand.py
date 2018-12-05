@@ -72,7 +72,7 @@ va_workload.setup(exp_time)
 
 # Parameter to be varied
 #dn  = np.array(list(range(1000, 160001, 5000)))
-dn  = np.array([1])
+dn  = np.array([750])
 # Run experiments by varying a parameter
 pname = 'value per slot (w) = '
 for w in dn:

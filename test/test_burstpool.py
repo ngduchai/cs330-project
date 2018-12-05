@@ -16,22 +16,32 @@ from burstpool import BurstPool;
 from staticrm import StaticRM;
 from env import Env;
 from vaworkload import VAWorkload
+from flatworkload import FlatWorkload
 
-pool = BurstPool(0, 3, 0)
-pool.alloc(15)
-print(pool.requirement)
+pool = BurstPool(0, 0)
+pool.alloc(pool.requirement * 2)
 
-time = 10
+time = 10000
 
-start_times = []
-tasks = []
+workload = FlatWorkload(pool.requirement * 2, 5, 1, "burst") 
+
+pool_tasks = {}
+pool_tasks["burst"] = []
+gok = True
+last_finish = len(workload.finished_tasks)
 
 for t in range(time):
-	new = common.Task(t, 0, 5, 3, pool, None)
-	new2 = common.Task(t, 0, 5, 3, pool, None)
-	pool.launch_task([new,new2])
-	tasks.append(new)
-	tasks.append(new2)
-	for task in tasks:
-		print(task.status),
-	print()
+    workload.make_request(t, pool_tasks)
+    pool.launch_task(t, pool_tasks["burst"])
+    if (t % 30 == 0):
+        current_finish = len(workload.finished_tasks)
+        print "Rate:", current_finished - last_finished 
+        if current_finished - last_finished < 2:
+            gok = False
+            break
+if gok:
+    print "The pool works"
+else:
+    print "Something not good happened"
+
+	
