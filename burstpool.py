@@ -19,7 +19,10 @@ class BurstPool(rm.Pool):
         if self.capacity <= self.requirement:
             return 0
         else:
-            unit_resource = math.ceil(max(self.run_length)/self.time_guarantee)*self.max_resource*self.task_guarantee
+            if self.run_length:
+                unit_resource = math.ceil(max(self.run_length)/self.time_guarantee)*self.max_resource*self.task_guarantee
+            else:
+                unit_resrouce = 0
             return (self.capacity-self.requirement-max(self.capacity-self.free_capacity-unit_resource, 0))
 
     def reclaim(self, unit):
@@ -46,7 +49,7 @@ class BurstPool(rm.Pool):
             if task.resource <= self.max_resource and task.resource <= max_launch and task.resource <= self.free_capacity:
                 self.free_capacity -= task.resource
                 self.counter[1] += task.resource
-                task.status = rm.STATUS_RUNNING
+                # task.status = rm.Status.RUNNING
                 self.running_tasks.append(task)
                 self.run_length.append(0)
             #else reject
@@ -66,18 +69,17 @@ class BurstPool(rm.Pool):
             #remove if it's finished
             if task.isFinished():
                 self.free_capacity += task.resource
-                task.status = rm.STATUS_FINISH
+                # task.status = rm.Status.FINISHed
                 #finished.append(task)
 
                 task.finish_time = time + 1
                 task.workload.finished_tasks.append(task)
-                
                 self.running_tasks.pop(i)
                 self.run_length.pop(i)
             #remove if it runs over max_time_length
             elif self.run_length[i] >= self.runtime_limit:
                 self.free_capacity += task.resource
-                task.status = rm.STATUS_KILLED
+                # task.status = rm.STATUS_KILLED
                 #finished.append(task)
                 
                 task.workload.failed_tasks.append(task)
