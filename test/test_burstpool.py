@@ -19,26 +19,29 @@ from vaworkload import VAWorkload
 from flatworkload import FlatWorkload
 
 pool = BurstPool(0, 0)
-pool.alloc(pool.requirement * 2)
+pool.alloc(pool.requirement)
 
-time = 10000
+print pool.requirement
 
-workload = FlatWorkload(pool.requirement * 2, 5, 1, "burst") 
+time = 1000
+
+workload = FlatWorkload(pool.requirement * 4, 5, 1, "burst") 
 
 pool_tasks = {}
-pool_tasks["burst"] = []
 gok = True
 last_finish = len(workload.finished_tasks)
 
 for t in range(time):
+    pool_tasks["burst"] = []
     workload.make_request(t, pool_tasks)
     pool.launch_task(t, pool_tasks["burst"])
     if (t % 30 == 0):
         current_finish = len(workload.finished_tasks)
-        print "Rate:", current_finished - last_finished 
-        if current_finished - last_finished < 2:
+        print "Rate at", t, ":", current_finish - last_finish 
+        if current_finish - last_finish < 2:
             gok = False
             break
+        last_finish = current_finish
 if gok:
     print "The pool works"
 else:

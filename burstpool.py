@@ -19,6 +19,7 @@ class BurstPool(rm.Pool):
         if self.capacity <= self.requirement:
             return 0
         else:
+            unit_resource = 0
             if self.run_length:
                 unit_resource = math.ceil(max(self.run_length)/self.time_guarantee)*self.max_resource*self.task_guarantee
             else:
@@ -59,7 +60,10 @@ class BurstPool(rm.Pool):
                 #task.status = rm.STATUS_FAILED
                 #finished.append(task)
                 # We break the interface to improve the implementation here
-                task.workload.failed_tasks += tasks[i:]
+                if hasattr(task.workload, failed_burst_tasks):
+                    task.workload.failed_burst_tasks += tasks[i:]
+                else:
+                    task.workload.failed_tasks += tasks[i:]
                 break;
 
         # execute running tasks
