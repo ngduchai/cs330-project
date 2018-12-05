@@ -36,19 +36,21 @@ class VAWorkload(rm.Workload):
         self.burst_time = []
         for i in range(len(self.setup_burst_time) - 1):
             self.burst_time.append(self.setup_burst_time[i+1])
+        self.finished_tasks = []
 
-
-    def make_request(self):
-        tasks = self.failed_tasks; # resubmit all failed tasks
+    def make_request(self, time, pools):
+        if self.poolname not in pools:
+            pools[self.poolname] = []
+        pools[self.poolname] += self.failed_tasks; # resubmit all failed tasks
         self.failed_tasks = []
         if self.wait_for_burst != 0:
-            t = rm.Task(self.id_count, 0, self.normal_load, 1, self.poolname, self)
+            t = rm.Task(self.id_count, time, self.normal_load, 1, self.poolname, self)
             self.id_count += 1
-            tasks.append(t)
+            pools[self.poolname].append(t)
             self.wait_for_burst -= 1
         else:
             if len(self.burst_time) > 0:
-                self.waiting_for_burst = self.burst_time.pop()
+                self.wait_for_burst = self.burst_time.pop()
             else:
                 self.wait_for_burst = int(random.expovariate(self.lamb))
             self.bursts.append(self.burst_width)
@@ -57,14 +59,15 @@ class VAWorkload(rm.Workload):
         for burst in self.bursts:
             resource = 0
             while resource < self.burst_height:
-                tasks.append(rm.Task(self.id_count, 0, self.task_size, 1, self.poolname, self))
+                t = rm.Task(self.id_count, time, self.task_size, 1, self.poolname, self)
+                pools[self.poolname].append(t)
                 self.id_count += 1
                 resource += self.task_size
             burst -= 1
             if burst != 0:
                 new_bursts.append(burst)
         self.bursts = new_bursts
-        return tasks
+        return
 
     def update(self, tasks):
         for task in tasks:
@@ -75,11 +78,12 @@ class VAWorkload(rm.Workload):
 
     def value(self):
         value = 0
+        raw_value = float(self.value_per_slot) * self.task_size / self.burst_height
         for task in self.finished_tasks:
             if task.resource != self.normal_load:
                 # Only burst generates value
                 latency = task.finish_time - task.arrival_time
-                value += self.value_per_slot * (self.timeliness ** (-latency))
+                value += raw_value * (self.timeliness ** (-latency))
         return value
 
 

@@ -27,8 +27,8 @@ def plot_values(p, va, rf, pname):
 # System capacity
 SC = 350
 # Experiment length
-exp_time = 1 * 30 * 60 * 60 # An hour
-#exp_time = 10 * 30 * 60 # 15 mins
+#exp_time = 1 * 30 * 60 * 60 # An hour
+exp_time = 15 * 60 * 30 # 30 mins
 # Pool names
 POOLNAME_BURST = "on-demand-burst"
 POOLNAME_FLAT =  "on-demand-flat"
@@ -55,7 +55,7 @@ ondemand_min_len = 1 * 60 * 30 # on-demand pool charge for at least 1 min
 #mRva = (int(mRva / 10) + 1) * 10
 mRva = 0
 #Rva = np.array(list(range(mRva, SC+1)))
-Rva = np.array(list(range(mRva, SC+1, 50)))
+Rva = np.array(list(range(mRva, SC+1, 25)))
 Rsf = SC - Rva
 
 # Experiment outcomes
@@ -95,11 +95,11 @@ for w in dn:
         env.add_workload("va", va_workload)
     
         # system contain 2 on-demand pools, one for flat and another for VA
-        #burst_pool = OnDemandPool(ondemand_min_len, Rva[i])
-        burst_pool = ReservedPool(Rva[i])
+        burst_pool = OnDemandPool(ondemand_min_len, Rva[i])
+        #burst_pool = ReservedPool(Rva[i])
         env.add_pool(POOLNAME_BURST, burst_pool)
-        #flat_pool = OnDemandPool(ondemand_min_len, Rsf[i])
-        flat_pool = ReservedPool(Rsf[i])
+        flat_pool = OnDemandPool(ondemand_min_len, Rsf[i])
+        #flat_pool = ReservedPool(Rsf[i])
         env.add_pool(POOLNAME_FLAT, flat_pool)
 
         # Run experiment
@@ -129,10 +129,10 @@ plt.figure(1)
 dt = 0
 plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
 
-plt.figure(2)
+#plt.figure(2)
 #dt = int(len(dn) / 2) - 1
-dt = 1
-plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
+#dt = 1
+#plot_values(Rva, Vva[dt], Vrf[dt], pname + str(dn[dt]))
 
 #plt.figure(3)
 #dt = len(dn) - 1

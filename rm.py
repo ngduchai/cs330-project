@@ -49,7 +49,7 @@ class Pool(object):
     	#Check the task before returning resources to the manager
         return
 
-    def launch_task(self, tasks):
+    def launch_task(self, time, tasks):
     	#call task.execute() every time
     	#launch specific task on a set of resources
         #return a list of tasks that have finished at this particular time slot 
@@ -87,7 +87,7 @@ class Workload:
         self.finished_tasks = []
 
 
-    def make_request(self):
+    def make_request(self, time, pools):
         #create a list of tasks and submit it to pool        
         return
 
