@@ -10,7 +10,7 @@ class BurstPool(rm.Pool):
         self.task_guarantee = 2#number of task
         self.max_resource = 5#number of maximum resource for each task
         self.time_guarantee = 30#time frames for the guarantee
-        self.requirement = self.task_guarantee*self.max_resource*(limit/self.time_guarantee)#minimum requirement for guarantees
+        self.requirement = self.task_guarantee*self.max_resource*(self.runtime_limit/self.time_guarantee)
         self.counter = [0]*2
         # self.shrink_capacity = 0
 
@@ -34,12 +34,14 @@ class BurstPool(rm.Pool):
             self.free_capacity -= temp
             return temp
 
-    def launch_task(self, tasks):
+    def launch_task(self, time, tasks):
         finished = []
         #add new tasks from input to the running_tasks list
         self.counter[0] += 1
         max_launch = self.extra_capacity()+self.task_guarantee*self.max_resource-self.counter[1]
-        for task in tasks:
+        #for task in tasks:
+        for i in range(len(tasks)):
+            task = tasks[i]
             #launch if there's enough resource
             if task.resource <= self.max_resource and task.resource <= max_launch and task.resource <= self.free_capacity:
                 self.free_capacity -= task.resource
@@ -49,8 +51,12 @@ class BurstPool(rm.Pool):
                 self.run_length.append(0)
             #else reject
             else:
-                task.status = rm.STATUS_FAILED
-                finished.append(task)
+                #task.status = rm.STATUS_FAILED
+                #finished.append(task)
+                # We break the interface to improve the implementation here
+                task.workload.failed_tasks += tasks[i:]
+                break;
+
         # execute running tasks
         i = 0
         while i < len(self.running_tasks):
@@ -61,14 +67,21 @@ class BurstPool(rm.Pool):
             if task.isFinished():
                 self.free_capacity += task.resource
                 task.status = rm.STATUS_FINISH
-                finished.append(task)
+                #finished.append(task)
+
+                task.finish_time = time + 1
+                task.workload.finished_tasks.append(task)
+                
                 self.running_tasks.pop(i)
                 self.run_length.pop(i)
             #remove if it runs over max_time_length
             elif self.run_length[i] >= self.runtime_limit:
                 self.free_capacity += task.resource
                 task.status = rm.STATUS_KILLED
-                finished.append(task)
+                #finished.append(task)
+                
+                task.workload.failed_tasks.append(task)
+                
                 self.running_tasks.pop(i)
                 self.run_length.pop(i)
             else:
@@ -76,7 +89,8 @@ class BurstPool(rm.Pool):
         if self.counter[0] >= self.time_guarantee:
             self.counter = [0]*2
         self.reclaim(0)
-        return finished
+        #return finished
+        return
 
     def cost(self, task):
         # cost = resource * runtime * cost_per_resource
