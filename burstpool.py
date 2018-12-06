@@ -87,9 +87,9 @@ class BurstPool(rm.Pool):
                 # task.status = rm.STATUS_KILLED
                 #finished.append(task)
 
-				if hasattr(task.workload, 'failed_burst_tasks'):
+                if hasattr(task.workload, 'failed_burst_tasks'):
 					task.workload.failed_burst_tasks.append(task)
-				else:
+                else:
                 	task.workload.failed_tasks.append(task)
                 
                 self.running_tasks.pop(i)
