@@ -90,8 +90,8 @@ for w in dn:
         va_workload.restart()
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(Rbp[i], 30, 0)
-        ondemand_pool = OnDemandPool(ondemand_min_len, Rod[i])
+        burst_pool = BurstPool(0, 30, 0)
+        ondemand_pool = OnDemandPool(ondemand_min_len, 1)
 
         env.add_pool(BURST_POOL, burst_pool)
         env.add_pool(ONDEMAND_POOL, ondemand_pool)
