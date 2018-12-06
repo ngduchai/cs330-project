@@ -27,15 +27,15 @@ def plot_values(p, va, rf, pname):
 # System capacity
 SC = 350
 # Experiment length
-exp_time = 1 * 30 * 60 * 60 # An hour
-#exp_time = 10 * 60 * 30 # 30 mins
+#exp_time = 1 * 30 * 60 * 60 # An hour
+exp_time = 10 * 60 * 30 # 30 mins
 # Pool names
 POOLNAME_BURST = "on-demand-burst"
 POOLNAME_FLAT =  "on-demand-flat"
 
 # The parameters for the VA workload is chosen to be as close to the realistic as possible
 lamb = 1 / float(10 * 60 * 30) # happen 1 per 10 mins
-value_per_slot = 10
+value_per_slot = 500
 normal_load = 1
 burst_height = normal_load * 140
 task_size = 5
@@ -72,10 +72,10 @@ va_workload.setup(exp_time)
 
 # Parameter to be varied
 #dn  = np.array(list(range(1000, 160001, 5000)))
-dn  = np.array([500, 750, 1000])
+dn  = np.array([])
 # Run experiments by varying a parameter
 pname = 'value per slot (w) = '
-for w in dn:
+for lamb in dn:
     value = []
     vas = []
     rfs = []
