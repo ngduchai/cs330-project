@@ -12,7 +12,7 @@ class Status(Enum):
     REJECTED = 1
     WAITING = 2
     RUNNING = 3
-    KIILED = 4
+    KILLED = 4
 
 class RM:
     def __init__(self, capacity):

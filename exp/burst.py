@@ -17,6 +17,7 @@ from burstpool import BurstPool;
 from staticrm import StaticRM;
 from env import Env;
 from reservedpool import ReservedPool
+from mixedvaworkload import MixedVAWorkload
 
 def plot_values(p, va, pname):
     plt.plot(p, va, labels = 'Video Analytic')
@@ -26,10 +27,14 @@ def plot_values(p, va, pname):
     plt.title(pname)
 
 # System capacity
+<<<<<<< HEAD
 SC = 350
+=======
+SC = 453600 * 2
+>>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
-exp_time = 15 * 60 * 30 # 30 mins
+exp_time = 20 * 60 * 30 # 30 mins
 # Pool names
 BURST_POOL = "burst"
 ONDEMAND_POOL =  "on-demand"
@@ -60,8 +65,13 @@ OpValues = [] # Optimal value
 OpPartition = [] # Optimal partition
 
 # initialize VA workload
+<<<<<<< HEAD
 va_workload = VAWorkload(lamb, value_per_slot, normal_load,
         burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
+=======
+va_workload = MixedVAWorkload(0, lamb, value_per_slot, normal_load,
+        burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL, BURST_POOL)
+>>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
 va_workload.setup(exp_time)
 
 # Parameter to be varied
@@ -76,7 +86,7 @@ for w in dn:
         start = time.time()
         
         # initialize resource manager
-        rm = StaticRM(453600)
+        rm = StaticRM(SC)
         # initialize environment
         env = Env(rm)
         
@@ -85,9 +95,13 @@ for w in dn:
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
         burst_pool = BurstPool(1, 0)
-        ondemand_pool = OnDemandPool(ondemand_min_len, 0)
+        ondemand_pool = OnDemandPool(ondemand_min_len, 1)
 
+<<<<<<< HEAD
         # env.add_pool(BURST_POOL, burst_pool)
+=======
+        env.add_pool(BURST_POOL, burst_pool)
+>>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
         env.add_pool(ONDEMAND_POOL, ondemand_pool)
 
         # Run experiment

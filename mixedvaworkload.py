@@ -2,6 +2,8 @@
 import rm;
 import random;
 
+import numpy as np
+
 class MixedVAWorkload(rm.Workload):
     def __init__(self, ratio, lamb, value_per_slot, normal_load,
             burst_height, burst_width, timeliness, task_size, ondemand, burst):
@@ -23,6 +25,8 @@ class MixedVAWorkload(rm.Workload):
         self.ratio = ratio
         self.ondemand = ondemand
         self.burst = burst
+        self.mean_runtime = 5 * 60 * 30
+        self.stddev_runtime = 2 * 60 * 30
 
     def setup(self, time):
         t = 0
@@ -43,6 +47,7 @@ class MixedVAWorkload(rm.Workload):
         self.finished_tasks = []
 
     def make_request(self, time, pools):
+
         if self.ondemand not in pools:
             pools[self.ondemand] = []
         pools[self.ondemand] += self.failed_ondemand_tasks; # resubmit all failed tasks
@@ -51,6 +56,7 @@ class MixedVAWorkload(rm.Workload):
             pools[self.burst] = []
         pools[self.burst] += self.failed_burst_tasks; # resubmit all failed tasks
         self.failed_burst_tasks = []
+        # submit new tasks
         if self.wait_for_burst != 0:
             t = rm.Task(self.id_count, time, self.normal_load, 1, self.ondemand, self)
             self.id_count += 1
@@ -63,23 +69,27 @@ class MixedVAWorkload(rm.Workload):
                 self.wait_for_burst = int(random.expovariate(self.lamb))
             self.bursts.append(self.burst_width)
         
+        # generating bursts
         new_bursts = []
         for burst in self.bursts:
             ondemand_height = self.ratio * self.burst_height
             burst_height = self.burst_height - ondemand_height
             resource = 0
             while resource < ondemand_height:
-                t = rm.Task(self.id_count, time, self.task_size, 1, self.ondemand, self)
+                length = int(np.random.normal(self.mean_runtime, self.stddev_runtime))
+                t = rm.Task(self.id_count, time, self.task_size, length, self.ondemand, self)
                 pools[self.ondemand].append(t)
                 self.id_count += 1
                 resource += self.task_size
             
             resource = 0
             while resource < burst_height:
-                t = rm.Task(self.id_count, time, self.task_size, 1, self.burst, self)
+                length = int(np.random.normal(self.mean_runtime, self.stddev_runtime))
+                t = rm.Task(self.id_count, time, self.task_size, length, self.burst, self)
                 pools[self.burst].append(t)
                 self.id_count += 1
                 resource += self.task_size
+
             burst -= 1
             if burst != 0:
                 new_bursts.append(burst)
