@@ -14,14 +14,15 @@ def plot_values(p, va, rf, pname):
 
 
 # Set up unchanged parameters
-lamb = 1e-5 # To avoid overlapping, the highest frequency should be 0.0005
-h = 200
-d = 900 # ~30 seconds of 30 fps deep processing
+lamb = 1 / float(10 * 60 * 30)
+h = 140
+d = 1 * 60 * 30 # ~30 seconds of 30 fps deep processing
 tau = 1.01 # value drop ~50 per min
-c = 400
-SC = 500
+c = 280
+SC = 350
 x = 1
-w = 80000 #8
+w = 500
+
 
 # Vary parameters
 # Note that video analytic share must large enough to 
@@ -39,7 +40,7 @@ OpPartition = []
 # Parameters used for experiment
 #dn = np.array(list(range(10, 9001, 10)));
 dn = np.array(list(range(10, 901, 10)));
-d_time_lamb = 900 * 1e-5
+d_time_lamb = 1 * 60 * 30 * 1 / float(10 * 60 * 30)
 pname = 'd';
 for d in dn:
     value = []
