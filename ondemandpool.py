@@ -8,6 +8,7 @@ class OnDemandPool(rm.Pool):
         self.shrink_capacity = 0
         self.od_min_len = od_min_len
         self.acc_cost = 0
+        self.pending = {}
 
     def reclaim(self, unit):
         #reclaim resources
@@ -32,7 +33,12 @@ class OnDemandPool(rm.Pool):
             task = tasks[i]
             if task.resource <= self.free_capacity:
                 self.free_capacity -= task.resource
-                self.running_tasks.append(task)
+                # self.running_tasks.append(task)
+                task.status = rm.Status.RUNNING
+                finish_time = time + task.runtime
+                if finish_time not in self.pending:
+                    self.pending[finish_time] = []
+                self.pending[finish_time].append(task)
             else:
                 # NOTE: we assume that the pool serves only 1 workload, which is true
                 # in our scenarios
@@ -50,27 +56,28 @@ class OnDemandPool(rm.Pool):
         #print "accept task", end - start
         # run each task
         reclaimed = 0
-        new_running_tasks = []
-        for task in self.running_tasks:
-            task.execute()
-            if task.isFinished():
+        # new_running_tasks = []
+        if time in self.pending:
+            for task in self.pending[time]:
+                # task.execute()
+                # if task.isFinished():
                 self.acc_cost += self.cost(task)
                 reclaimed += task.resource
                 task.status = rm.Status.FINISHED
-                task.finish_time = time + 1
+                task.finish_time = time
                 task.workload.finished_tasks.append(task)
-                #finished.append(task)
-            else:
-                new_running_tasks.append(task)
-        self.running_tasks = new_running_tasks
+                    #finished.append(task)
+                # else:
+                    # new_running_tasks.append(task)
+        # self.running_tasks = new_running_tasks
         # reclaim additional resources when done running tasks
         #if reclaimed > 0:
         #    self.free_capacity += reclaimed
         #    if self.shrink_capacity > 0:
         #        self.reclaim(0)
         if self.shrink_capacity < reclaimed:
-            self.shrink_capacity = 0
             self.free_capacity += reclaimed - self.shrink_capacity
+            self.shrink_capacity = 0
         else:
             self.shrink_capacity -= reclaimed
         return
