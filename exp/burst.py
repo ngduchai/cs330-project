@@ -66,7 +66,7 @@ OpPartition = [] # Optimal partition
 # initialize VA workload
 # va_workload = VAWorkload(lamb, value_per_slot, normal_load,
         # burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
-va_workload = MixedVAWorkload(0, lamb, value_per_slot, normal_load,
+va_workload = MixedVAWorkload(0.5, lamb, value_per_slot, normal_load,
         burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL, BURST_POOL)
 va_workload.setup(exp_time)
 
@@ -90,7 +90,7 @@ for w in dn:
         va_workload.restart()
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(0, 30, 0)
+        burst_pool = BurstPool(1, 30, 0)
         ondemand_pool = OnDemandPool(ondemand_min_len, 1)
 
         env.add_pool(BURST_POOL, burst_pool)
