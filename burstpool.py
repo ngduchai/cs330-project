@@ -7,7 +7,7 @@ class BurstPool(rm.Pool):
         self.runtime_limit = 16200
         self.inv_cost = inv_cost
         self.run_length = []
-        self.task_guarantee = 2#number of task
+        self.task_guarantee = 28*30#number of task
         self.max_resource = 5#number of maximum resource for each task
         self.time_guarantee = 30#time frames for the guarantee
         self.requirement = self.task_guarantee*self.max_resource*(self.runtime_limit/self.time_guarantee)

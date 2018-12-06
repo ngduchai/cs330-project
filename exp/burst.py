@@ -26,7 +26,7 @@ def plot_values(p, va, pname):
     plt.title(pname)
 
 # System capacity
-SC = 350
+SC = 453600
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
 exp_time = 15 * 60 * 30 # 30 mins
@@ -76,7 +76,7 @@ for w in dn:
         start = time.time()
         
         # initialize resource manager
-        rm = StaticRM(SC)
+        rm = StaticRM(453600)
         # initialize environment
         env = Env(rm)
         
@@ -84,7 +84,7 @@ for w in dn:
         va_workload.restart()
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(ondemand_min_len, 5000)
+        burst_pool = BurstPool(1, 0)
         ondemand_pool = OnDemandPool(ondemand_min_len, 0)
 
         env.add_pool(BURST_POOL, burst_pool)
