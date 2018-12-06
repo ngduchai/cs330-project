@@ -26,7 +26,7 @@ def plot_values(p, va, pname):
     plt.title(pname)
 
 # System capacity
-SC = 453600
+SC = 350
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
 exp_time = 15 * 60 * 30 # 30 mins
@@ -39,7 +39,7 @@ lamb = 1 / float(10 * 60 * 30) # happen 1 per 10 mins
 value_per_slot = 10
 normal_load = 1
 burst_height = normal_load * 140
-task_size = 10
+task_size = 5
 burst_width = 1 * 60 * 30 # burst last for 1 min
 timeliness = 1.01
 
@@ -61,7 +61,7 @@ OpPartition = [] # Optimal partition
 
 # initialize VA workload
 va_workload = VAWorkload(lamb, value_per_slot, normal_load,
-        burst_height, burst_width, timeliness, task_size, BURST_POOL)
+        burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
 va_workload.setup(exp_time)
 
 # Parameter to be varied
@@ -87,8 +87,8 @@ for w in dn:
         burst_pool = BurstPool(1, 0)
         ondemand_pool = OnDemandPool(ondemand_min_len, 0)
 
-        env.add_pool(BURST_POOL, burst_pool)
-        # env.add_pool(ONDEMAND_POOL, ondemand_pool)
+        # env.add_pool(BURST_POOL, burst_pool)
+        env.add_pool(ONDEMAND_POOL, ondemand_pool)
 
         # Run experiment
         env.run(exp_time)
