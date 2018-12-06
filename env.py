@@ -20,6 +20,7 @@ class Env:
         self.rm.adjust_partition()
         # run experiment for [length] time slot
         for time in range(length):
+            print "step", time
             # check for new tasks from workload
             pools = {}
             for _, workload in self.workloads.iteritems():

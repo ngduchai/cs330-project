@@ -66,6 +66,7 @@ class BurstPool(rm.Pool):
 
         # execute running tasks
         i = 0
+        print len(self.running_tasks)
         while i < len(self.running_tasks):
             task = self.running_tasks[i]
             task.execute()
