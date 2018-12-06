@@ -72,12 +72,11 @@ class MixedVAWorkload(rm.Workload):
         # generating bursts
         new_bursts = []
         for burst in self.bursts:
-            #print "get burst"
             ondemand_height = self.ratio * self.burst_height
             burst_height = self.burst_height - ondemand_height
             resource = 0
             while resource < ondemand_height:
-                length = np.random.normal(self.mean_runtime, self.stddev_runtime)
+                length = int(np.random.normal(self.mean_runtime, self.stddev_runtime))
                 t = rm.Task(self.id_count, time, self.task_size, length, self.ondemand, self)
                 pools[self.ondemand].append(t)
                 self.id_count += 1
@@ -85,7 +84,7 @@ class MixedVAWorkload(rm.Workload):
             
             resource = 0
             while resource < burst_height:
-                length = np.random.normal(self.mean_runtime, self.stddev_runtime)
+                length = int(np.random.normal(self.mean_runtime, self.stddev_runtime))
                 t = rm.Task(self.id_count, time, self.task_size, length, self.burst, self)
                 pools[self.burst].append(t)
                 self.id_count += 1

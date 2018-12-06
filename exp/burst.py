@@ -30,7 +30,7 @@ def plot_values(p, va, pname):
 SC = 453600 * 2
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
-exp_time = 15 * 60 * 30 # 30 mins
+exp_time = 20 * 60 * 30 # 30 mins
 # Pool names
 BURST_POOL = "burst"
 ONDEMAND_POOL =  "on-demand"

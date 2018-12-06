@@ -12,6 +12,7 @@ class BurstPool(rm.Pool):
         self.time_guarantee = 30#time frames for the guarantee
         self.requirement = self.task_guarantee*self.max_resource*(self.runtime_limit/self.time_guarantee)
         self.counter = [0]*2
+        self.pending = {}
         # self.shrink_capacity = 0
 
     def extra_capacity(self):
@@ -51,8 +52,14 @@ class BurstPool(rm.Pool):
 
                 task.status = rm.Status.RUNNING
 
-                self.running_tasks.append(task)
-                self.run_length.append(0)
+                #self.running_tasks.append(task)
+                #self.run_length.append(0)
+
+                finish_time = time + min(task.runtime, self.runtime_limit)
+                if finish_time not in self.pending:
+                    self.pending[finish_time] = []
+                self.pending[finish_time].append(task)
+
             #else reject
             else:
                 #task.status = rm.STATUS_FAILED
@@ -63,39 +70,56 @@ class BurstPool(rm.Pool):
                 else:
                     task.workload.failed_tasks += tasks[i:]
                 break;
-
+        print time
         # execute running tasks
-        i = 0
-        print len(self.running_tasks)
-        while i < len(self.running_tasks):
-            task = self.running_tasks[i]
-            task.execute()
-            self.run_length[i] += 1
+        #i = 0
+        #print len(self.running_tasks)
+        #while i < len(self.running_tasks):
+        #    task = self.running_tasks[i]
+        #    task.execute()
+        #    self.run_length[i] += 1
             #remove if it's finished
-            if task.isFinished():
-                self.free_capacity += task.resource
+        #    if task.isFinished():
+        #        self.free_capacity += task.resource
                 # task.status = rm.Status.FINISHed
                 #finished.append(task)
 
-                task.finish_time = time + 1
-                task.workload.finished_tasks.append(task)
-                self.running_tasks.pop(i)
-                self.run_length.pop(i)
+        #        task.finish_time = time + 1
+        #        task.workload.finished_tasks.append(task)
+        #        self.running_tasks.pop(i)
+        #        self.run_length.pop(i)
             #remove if it runs over max_time_length
-            elif self.run_length[i] >= self.runtime_limit:
-                self.free_capacity += task.resource
+        #    elif self.run_length[i] >= self.runtime_limit:
+        #        self.free_capacity += task.resource
                 # task.status = rm.STATUS_KILLED
                 #finished.append(task)
 
-                if hasattr(task.workload, 'failed_burst_tasks'):
-					task.workload.failed_burst_tasks.append(task)
-                else:
-                	task.workload.failed_tasks.append(task)
+        #        if hasattr(task.workload, 'failed_burst_tasks'):
+        #           task.workload.failed_burst_tasks.append(task)
+        #        else:
+        #           task.workload.failed_tasks.append(task)
+        #        
+        #        self.running_tasks.pop(i)
+        #        self.run_length.pop(i)
+        #    else:
+        #        i += 1
+        print time
+        if time in self.pending:
+            for task in self.pending[time]:
+                print "finish burst"
+                self.free_capacity += task.resource
+                if task.runtime <= self.runtime_limit:
+                    task.status = rm.Status.FINISHED
                 
-                self.running_tasks.pop(i)
-                self.run_length.pop(i)
-            else:
-                i += 1
+                    task.finish_time = time
+                    task.workload.finished_tasks.append(task)
+                else:
+                    task.status = rm.Status.KILLED
+                    if hasattr(task.workload, 'failed_burst_tasks'):
+                        task.workload.failed_burst_tasks.append(task)
+                    else:
+                        task.workload.failed_tasks.append(task)
+
         if self.counter[0] >= self.time_guarantee:
             self.counter = [0]*2
         self.reclaim(0)
