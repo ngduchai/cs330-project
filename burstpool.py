@@ -2,17 +2,18 @@ import rm
 import math
 
 class BurstPool(rm.Pool):
-    def __init__(self, weight, inv_cost):
+    def __init__(self, weight, task_guarantee, inv_cost):
         rm.Pool.__init__(self, weight)
         self.runtime_limit = 16200
         self.inv_cost = inv_cost
         self.run_length = []
-        self.task_guarantee = 28*30#number of task
+        self.task_guarantee = task_guarantee#number of task
         self.max_resource = 5#number of maximum resource for each task
         self.time_guarantee = 30#time frames for the guarantee
         self.requirement = self.task_guarantee*self.max_resource*(self.runtime_limit/self.time_guarantee)
         self.counter = [0]*2
         self.pending = {}
+        self.acc_cost = 0
         # self.shrink_capacity = 0
 
     def extra_capacity(self):
@@ -70,7 +71,7 @@ class BurstPool(rm.Pool):
                 else:
                     task.workload.failed_tasks += tasks[i:]
                 break;
-        print time
+        # print time
         # execute running tasks
         #i = 0
         #print len(self.running_tasks)
@@ -103,11 +104,12 @@ class BurstPool(rm.Pool):
         #        self.run_length.pop(i)
         #    else:
         #        i += 1
-        print time
+        # print time
         if time in self.pending:
             for task in self.pending[time]:
-                print "finish burst"
+                # print "finish burst"
                 self.free_capacity += task.resource
+                self.acc_cost += self.cost(task)
                 if task.runtime <= self.runtime_limit:
                     task.status = rm.Status.FINISHED
                 
@@ -131,6 +133,4 @@ class BurstPool(rm.Pool):
         # cost = resource * runtime * cost_per_resource
         # duration is max of min duration for the pool and task duration
         # assuming cost per resource is 1
-            return inv_cost + task.resource * min(task.runtime, self.runtime_limit) * 0.8
-        else:
-            return 0
+        return self.inv_cost + task.resource * min(task.runtime, self.runtime_limit) * 0.8

@@ -7,6 +7,7 @@ class OnDemandPool(rm.Pool):
         # self.free_capacity = 0
         self.shrink_capacity = 0
         self.od_min_len = od_min_len
+        self.acc_cost = 0
 
     def reclaim(self, unit):
         #reclaim resources
@@ -53,6 +54,7 @@ class OnDemandPool(rm.Pool):
         for task in self.running_tasks:
             task.execute()
             if task.isFinished():
+                self.acc_cost += self.cost(task)
                 reclaimed += task.resource
                 task.status = rm.Status.FINISHED
                 task.finish_time = time + 1

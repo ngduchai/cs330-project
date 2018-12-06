@@ -27,11 +27,8 @@ def plot_values(p, va, pname):
     plt.title(pname)
 
 # System capacity
-<<<<<<< HEAD
-SC = 350
-=======
-SC = 453600 * 2
->>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
+SC = 81000
+# SC = 453600 * 2
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
 exp_time = 20 * 60 * 30 # 30 mins
@@ -56,8 +53,8 @@ ondemand_min_len = 1 * 60 * 30 # on-demand pool charge for at least 1 min
 #mRva = (int(mRva / 10) + 1) * 10
 #mRva = 0
 #Rva = np.array(list(range(mRva, SC+1)))
-Rbp = np.array(list(range(0, int(1.1*350), int(0.1*350))))
-Rod = SC - Rbp
+# Rbp = np.array(list(range(0, int(1.1*350), int(0.1*350))))
+# Rod = SC - Rbp
 
 # Experiment outcomes
 Values = [] # Total values
@@ -65,13 +62,10 @@ OpValues = [] # Optimal value
 OpPartition = [] # Optimal partition
 
 # initialize VA workload
-<<<<<<< HEAD
-va_workload = VAWorkload(lamb, value_per_slot, normal_load,
-        burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
-=======
+# va_workload = VAWorkload(lamb, value_per_slot, normal_load,
+        # burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
 va_workload = MixedVAWorkload(0, lamb, value_per_slot, normal_load,
         burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL, BURST_POOL)
->>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
 va_workload.setup(exp_time)
 
 # Parameter to be varied
@@ -94,14 +88,10 @@ for w in dn:
         va_workload.restart()
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(1, 0)
-        ondemand_pool = OnDemandPool(ondemand_min_len, 1)
+        burst_pool = BurstPool(1, 30, 0)
+        ondemand_pool = OnDemandPool(ondemand_min_len, 0)
 
-<<<<<<< HEAD
-        # env.add_pool(BURST_POOL, burst_pool)
-=======
         env.add_pool(BURST_POOL, burst_pool)
->>>>>>> 7e96c0891bc3418a522a92e0efe2ca45a88e2f1c
         env.add_pool(ONDEMAND_POOL, ondemand_pool)
 
         # Run experiment
@@ -113,9 +103,9 @@ for w in dn:
         print len(va_workload.finished_tasks)
         
         end = time.time()
-        print "Progress:", i, "per", len(Rod)
+        # print "Progress:", i, "per", len(Rod)
         print " ---- Partition: burst pool =", burst_pool.capacity, "on-demand pool =", ondemand_pool.capacity
-        print " ---- Value: value =", value
+        print " ---- Value: value =", value, "cost =",burst_pool.acc_cost
         print " ---- Time:", end - start, "seconds"
         
     Values.append(value)
