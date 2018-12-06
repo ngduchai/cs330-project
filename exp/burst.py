@@ -54,7 +54,7 @@ ondemand_min_len = 1 * 60 * 30 # on-demand pool charge for at least 1 min
 #mRva = 0
 #Rva = np.array(list(range(mRva, SC+1)))
 Rbp = np.array(list(range(0, 11)))
-Rod = [10]*11-Rbp
+# Rod = [10]*11-Rbp
 # Rbp = [10]
 # Rod = [0]
 
@@ -63,6 +63,7 @@ Values = [] # Total values
 OpValues = [] # Optimal value
 OpPartition = [] # Optimal partition
 
+guarantee = np.array(list(range(1, 31)))
 # initialize VA workload
 # va_workload = VAWorkload(lamb, value_per_slot, normal_load,
         # burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
@@ -77,7 +78,7 @@ dn  = np.array([1])
 pname = 'value per slot (w) = '
 for w in dn:
     value = []
-    for i in range(len(Rbp)):
+    for i in range(len(guarantee)):
         gc.collect()
         start = time.time()
         
@@ -90,8 +91,8 @@ for w in dn:
         va_workload.restart()
         env.add_workload("va", va_workload)
         # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(0, 30, 0)
-        ondemand_pool = OnDemandPool(ondemand_min_len, 1)
+        burst_pool = BurstPool(Rbp[10], guarantee[i], 0)
+        ondemand_pool = OnDemandPool(ondemand_min_len, 0)
 
         env.add_pool(BURST_POOL, burst_pool)
         env.add_pool(ONDEMAND_POOL, ondemand_pool)
