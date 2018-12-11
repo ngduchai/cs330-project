@@ -31,7 +31,7 @@ SC = 81000
 # SC = 453600 * 2
 # Experiment length
 #exp_time = 1 * 30 * 60 * 60 # An hour
-exp_time = 20 * 60 * 30 # 30 mins
+exp_time = 30 * 60 * 30 # 30 mins
 # Pool names
 BURST_POOL = "burst"
 ONDEMAND_POOL =  "on-demand"
@@ -67,7 +67,7 @@ guarantee = np.array(list(range(1, 31)))
 # initialize VA workload
 # va_workload = VAWorkload(lamb, value_per_slot, normal_load,
         # burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL)
-va_workload = MixedVAWorkload(0.5, lamb, value_per_slot, normal_load,
+va_workload = MixedVAWorkload(0, lamb, value_per_slot, normal_load,
         burst_height, burst_width, timeliness, task_size, ONDEMAND_POOL, BURST_POOL)
 va_workload.setup(exp_time)
 
@@ -76,48 +76,52 @@ va_workload.setup(exp_time)
 dn  = np.array([1])
 # Run experiments by varying a parameter
 pname = 'value per slot (w) = '
-for w in dn:
+stddevs = np.array(range(2, 7, 1)) * 60 * 30
+print stddevs
+for stddev in stddevs:
     value = []
-    for i in range(len(guarantee)):
-        gc.collect()
-        start = time.time()
+    gc.collect()
+    start = time.time()
         
-        # initialize resource manager
-        rm = StaticRM(SC)
-        # initialize environment
-        env = Env(rm)
-        
-        # initialize workloads 
-        va_workload.restart()
-        env.add_workload("va", va_workload)
-        # system contain 2 on-demand pools, one for flat and another for VA
-        burst_pool = BurstPool(Rbp[10], guarantee[i], 0)
-        ondemand_pool = OnDemandPool(ondemand_min_len, 0)
+    # initialize resource manager
+    rm = StaticRM(SC)
+    # initialize environment
+    env = Env(rm)
+    
+    # initialize workloads 
+    va_workload.restart()
+    va_workload.stddev_runtime = stddev
+    #va_workload.ratio = float(Rbp[i]) / 10.0
+    
+    env.add_workload("va", va_workload)
+    # system contain 2 on-demand pools, one for flat and another for VA
+    burst_pool = BurstPool(1, 15, 0)
+    ondemand_pool = OnDemandPool(ondemand_min_len, 0)
 
-        env.add_pool(BURST_POOL, burst_pool)
-        env.add_pool(ONDEMAND_POOL, ondemand_pool)
+    env.add_pool(BURST_POOL, burst_pool)
+    env.add_pool(ONDEMAND_POOL, ondemand_pool)
 
-        # Run experiment
-        env.run(exp_time)
+    # Run experiment
+    env.run(exp_time)
 
-        # Get outcome
-        va = env.workloads["va"].value()
-        value.append(va)
-        count = 0
-        for task in va_workload.finished_tasks:
-            if task.resource != va_workload.normal_load:
-                count += 1
-        print count
+    # Get outcome
+    va = env.workloads["va"].value()
+    value.append(va)
+    count = 0
+    for task in va_workload.finished_tasks:
+        if task.resource != va_workload.normal_load:
+            count += 1
+    print count
+    
+    end = time.time()
+    # print "Progress:", i, "per", len(Rod)
+    print " ---- Partition: burst pool =", burst_pool.capacity, "on-demand pool =", ondemand_pool.capacity
+    print " ---- stddev", stddev, ",", va, "," ,burst_pool.acc_cost+ondemand_pool.acc_cost
+    print " ---- Time:", end - start, "seconds"
         
-        end = time.time()
-        # print "Progress:", i, "per", len(Rod)
-        print " ---- Partition: burst pool =", burst_pool.capacity, "on-demand pool =", ondemand_pool.capacity
-        print " ---- Value: value =", va, "cost =",burst_pool.acc_cost+ondemand_pool.acc_cost
-        print " ---- Time:", end - start, "seconds"
-        
-    Values.append(value)
-    OpValues.append(max(value))
-    OpPartition.append(np.argmax(np.array(value)))
+    #Values.append(value)
+    #OpValues.append(max(value))
+    #OpPartition.append(np.argmax(np.array(value)))
 
 # Plot graphs
 # plt.figure(1)
