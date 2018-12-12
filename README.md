@@ -19,4 +19,8 @@ The simulation has two parts:
 
 Please check the 'exp' directory for usage instruction.
 
+Experiments of "Usage of multiple pools:
+ - Look at value and cost under different fraction of burst pool and on-demand pool
+ - Change the parameter of task_guarantee (guarantee ramp/second)
+ - Chagne the parameter of burst task's deadline through standard deviation in Poisson distribution
 
