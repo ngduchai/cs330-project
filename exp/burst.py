@@ -54,7 +54,8 @@ ondemand_min_len = 1 * 60 * 30 # on-demand pool charge for at least 1 min
 #mRva = 0
 #Rva = np.array(list(range(mRva, SC+1)))
 Rbp = np.array(list(range(0, 11)))
-# Rod = [10]*11-Rbp
+Rod = [10]*11-Rbp
+task_guarantee = 30
 # Rbp = [10]
 # Rod = [0]
 
@@ -80,8 +81,9 @@ stddevs = np.array(range(2, 7, 1)) * 60 * 30
 print stddevs
 for stddev in stddevs:
     value = []
-    gc.collect()
-    start = time.time()
+    for i in range(len(Rbp)):
+        gc.collect()
+        start = time.time()
         
     # initialize resource manager
     rm = StaticRM(SC)
@@ -119,9 +121,37 @@ for stddev in stddevs:
     print " ---- stddev", stddev, ",", va, "," ,burst_pool.acc_cost+ondemand_pool.acc_cost
     print " ---- Time:", end - start, "seconds"
         
-    #Values.append(value)
-    #OpValues.append(max(value))
-    #OpPartition.append(np.argmax(np.array(value)))
+        # initialize workloads 
+        va_workload.restart()
+        env.add_workload("va", va_workload)
+        # system contain 2 on-demand pools, one for flat and another for VA
+        burst_pool = BurstPool(Rbp[i], task_guarantee, 0)
+        ondemand_pool = OnDemandPool(ondemand_min_len, Rod[i])
+
+        env.add_pool(BURST_POOL, burst_pool)
+        env.add_pool(ONDEMAND_POOL, ondemand_pool)
+
+        # Run experiment
+        env.run(exp_time)
+
+        # Get outcome
+        va = env.workloads["va"].value()
+        value.append(va)
+        count = 0
+        for task in va_workload.finished_tasks:
+            if task.resource != va_workload.normal_load:
+                count += 1
+        print count
+        
+        end = time.time()
+        # print "Progress:", i, "per", len(Rod)
+        print " ---- Partition: burst pool =", burst_pool.capacity, "on-demand pool =", ondemand_pool.capacity
+        print " ---- Value: value =", va, "cost =",burst_pool.acc_cost+ondemand_pool.acc_cost
+        print " ---- Time:", end - start, "seconds"
+        
+    Values.append(value)
+    OpValues.append(max(value))
+    OpPartition.append(np.argmax(np.array(value)))
 
 # Plot graphs
 # plt.figure(1)
